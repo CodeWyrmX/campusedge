@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}My Profile - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>My Profile</h1>
+    <p>Update your details — including your year, once you've been promoted.</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="row g-4">
+    <!-- Profile summary -->
+    <div class="col-lg-4">
+        <div class="card p-4 text-center h-100">
+            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto mb-3"
+                 style="width: 72px; height: 72px; font-size: 1.8rem; color: #fff;">
+                {{ user.name[0] | upper }}
+            </div>
+            <h6 class="fw-semibold mb-1">{{ user.name }}</h6>
+            <p class="text-secondary small mb-3">{{ user.email }}</p>
+            <div class="d-flex justify-content-center gap-2">
+                <span class="badge bg-secondary">{{ user.branch or "-" }}</span>
+                <span class="badge bg-primary">Year {{ user.year or "-" }}</span>
+                <span class="badge bg-{{ 'dark' if user.role == 'admin' else 'success' }}">{{ user.role | title }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit form -->
+    <div class="col-lg-8">
+        <div class="card p-4">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <h6 class="fw-semibold mb-3"><i class="bi bi-person me-1 text-primary"></i> Basic Details</h6>
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ user.name }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                    <div class="form-text">Email can't be changed since it's your account identifier.</div>
+                </div>
+
+                <div class="row g-2 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Branch</label>
+                        <select name="branch" class="form-select" required>
+                            {% for b in branches %}
+                                <option value="{{ b }}" {% if b == user.branch %}selected{% endif %}>{{ b }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Year</label>
+                        <select name="year" class="form-select" required>
+                            {% for y in years %}
+                                <option value="{{ y }}" {% if y == user.year %}selected{% endif %}>{{ y }}{% if y == 1 %}st{% elif y == 2 %}nd{% elif y == 3 %}rd{% else %}th{% endif %} Year</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Promoted to the next year? Update it here to unlock the right resources.</div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <h6 class="fw-semibold mb-3"><i class="bi bi-lock me-1 text-primary"></i> Change Password <span class="text-secondary fw-normal small">(optional)</span></h6>
+                <div class="row g-2 mb-2">
+                    <div class="col-md-4">
+                        <label class="form-label">Current Password</label>
+                        <input type="password" name="current_password" class="form-control" placeholder="Required to change password">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">New Password</label>
+                        <input type="password" name="new_password" class="form-control" placeholder="Leave blank to keep current">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" name="confirm_password" class="form-control" placeholder="Re-enter new password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">
+                    <i class="bi bi-check-lg me-1"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

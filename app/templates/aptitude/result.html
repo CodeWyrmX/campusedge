@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Test Result - CampusEdge{% endblock %}
+{% block content %}
+<div class="card text-center p-4 mt-4" style="max-width: 480px; margin: 0 auto;">
+    <div class="stat-icon mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.5rem; background: rgba(22,163,74,0.12); color: var(--success);">
+        <i class="bi bi-check2-circle"></i>
+    </div>
+    <h4 class="fw-semibold mb-1">Test Completed!</h4>
+    <p class="text-secondary mb-2">
+        {{ category }} &middot; {{ difficulty }} &middot; Test {{ test_number }}
+    </p>
+    <p class="display-4 fw-bold mb-3">{{ score }} / {{ total }}</p>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+        <a href="{{ url_for('aptitude.take_quiz', category=category, difficulty=difficulty, test_number=test_number) }}"
+           class="btn btn-primary">
+            <i class="bi bi-arrow-repeat me-1"></i> Retake This Test
+        </a>
+        <a href="{{ url_for('aptitude.select_test', category=category, difficulty=difficulty) }}"
+           class="btn btn-outline-secondary">
+            Other Tests
+        </a>
+        <a href="{{ url_for('aptitude.history') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-clock-history me-1"></i> History
+        </a>
+    </div>
+</div>
+{% endblock %}

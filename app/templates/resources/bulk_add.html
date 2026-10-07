@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Bulk Add Resources - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>Bulk Add Resources</h1>
+    <p>Paste multiple resources at once instead of adding them one by one.</p>
+{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('resources.index', category=category) }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Resources
+    </a>
+</div>
+
+<div class="card p-4">
+    <h6 class="fw-semibold mb-3">Instructions</h6>
+    <p class="text-secondary small mb-3">
+        Set <code>Category</code>, <code>Branch</code> and <code>Year</code> once as defaults, then list
+        as many resources as you want with <code>Title</code> (required), <code>Subject</code>, <code>Link</code>
+        and <code>Description</code>. Use <code>Branch: Common</code> or leave it blank for "all branches",
+        and <code>Year: Any</code> or leave it blank for "all years". You can override the Branch/Year for a single
+        resource using <code>Resource Branch:</code> / <code>Resource Year:</code> right inside its block.
+    </p>
+
+    <pre class="p-3 rounded-3 mb-4" style="background: var(--bg); font-size: 0.85rem; border: 1px solid var(--border);">Category: notes
+Branch: Common
+Year: 1
+
+Title: Engineering Physics Notes
+Subject: Engineering Physics
+Link: https://www.geeksforgeeks.org/physics/
+Description: Core physics concepts for semester 1 - optics, mechanics, electromagnetism.
+
+Title: Engineering Chemistry Notes
+Subject: Engineering Chemistry
+Link: https://www.geeksforgeeks.org/chemistry/
+Description: Semester 1 chemistry fundamentals.
+
+Title: Programming in C Notes
+Subject: Programming in C
+Link: https://www.geeksforgeeks.org/c-programming-language/
+Description: Branch-specific note - overrides the Common default above.
+Resource Branch: CSE
+Resource Year: 1</pre>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Paste your resources here</label>
+            <textarea name="bulk_text" class="form-control" rows="18"
+                      placeholder="Paste resources in the format shown above..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Add All Resources
+        </button>
+    </form>
+</div>
+{% endblock %}

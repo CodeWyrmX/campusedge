@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Manage Aptitude Questions - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>Manage Aptitude Questions</h1>
+    <p>Add, review, or remove quiz questions by category, difficulty &amp; test number.</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-end gap-2 mb-3">
+    <a href="{{ url_for('admin.bulk_add_aptitude') }}" class="btn btn-success btn-sm">
+        <i class="bi bi-upload me-1"></i> Bulk Add
+    </a>
+    <a href="{{ url_for('admin.index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Admin
+    </a>
+</div>
+
+<div class="card p-4 mb-4">
+    <h6 class="fw-semibold mb-3"><i class="bi bi-plus-circle me-1 text-primary"></i> Add New Question</h6>
+    <form method="POST" action="{{ url_for('admin.add_aptitude_question') }}">
+        <div class="mb-3">
+            <label class="form-label">Question Text</label>
+            <input type="text" name="question_text" class="form-control" placeholder="Question text" required>
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-3">
+                <label class="form-label">Option A</label>
+                <input type="text" name="option_a" class="form-control" placeholder="Option A" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Option B</label>
+                <input type="text" name="option_b" class="form-control" placeholder="Option B" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Option C</label>
+                <input type="text" name="option_c" class="form-control" placeholder="Option C" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Option D</label>
+                <input type="text" name="option_d" class="form-control" placeholder="Option D" required>
+            </div>
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-2">
+                <label class="form-label">Correct</label>
+                <select name="correct_option" class="form-select">
+                    <option value="A">Correct: A</option>
+                    <option value="B">Correct: B</option>
+                    <option value="C">Correct: C</option>
+                    <option value="D">Correct: D</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Category</label>
+                <select name="category" class="form-select" required>
+                    <option value="" disabled selected>Select Category</option>
+                    {% for c in categories %}
+                        <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Difficulty</label>
+                <select name="difficulty" class="form-select">
+                    {% for d in difficulties %}
+                        <option value="{{ d }}" {% if d == "Easy" %}selected{% endif %}>{{ d }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Test Number</label>
+                <input type="number" name="test_number" class="form-control"
+                       placeholder="Test Number" value="1" min="1" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i> Add Question
+        </button>
+    </form>
+</div>
+
+<div class="card p-4">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Question</th>
+                    <th>Correct</th>
+                    <th>Category</th>
+                    <th>Difficulty</th>
+                    <th>Test #</th>
+                    <th style="width: 100px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in questions %}
+                <tr>
+                    <td>{{ q.question_text }}</td>
+                    <td class="fw-medium">{{ q.correct_option }}</td>
+                    <td>{{ q.category or "-" }}</td>
+                    <td>
+                        <span class="badge bg-{{ 'success' if q.difficulty == 'Easy' else ('warning' if q.difficulty == 'Medium' else 'danger') }}">
+                            {{ q.difficulty }}
+                        </span>
+                    </td>
+                    <td>{{ q.test_number or 1 }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.delete_aptitude_question', question_id=q.id) }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>Admin Panel</h1>
+    <p>Manage all portal content from here.</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card hover-card h-100 p-4">
+            <div class="stat-icon mb-3" style="background: rgba(37,99,235,0.12); color: var(--primary);">
+                <i class="bi bi-people"></i>
+            </div>
+            <h6 class="fw-semibold mb-1">Student Accounts</h6>
+            <p class="text-secondary small mb-3">View, promote, or remove users</p>
+            <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-primary mt-auto">Manage Users</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card hover-card h-100 p-4">
+            <div class="stat-icon mb-3" style="background: rgba(22,163,74,0.12); color: var(--success);">
+                <i class="bi bi-diagram-3"></i>
+            </div>
+            <h6 class="fw-semibold mb-1">DSA Topics</h6>
+            <p class="text-secondary small mb-3">Add or remove DSA topics</p>
+            <a href="{{ url_for('admin.dsa_topics') }}" class="btn btn-sm btn-primary mt-auto">Manage Topics</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card hover-card h-100 p-4">
+            <div class="stat-icon mb-3" style="background: rgba(245,158,11,0.12); color: var(--warning);">
+                <i class="bi bi-lightbulb"></i>
+            </div>
+            <h6 class="fw-semibold mb-1">Aptitude Questions</h6>
+            <p class="text-secondary small mb-3">Add or remove quiz questions</p>
+            <a href="{{ url_for('admin.aptitude_questions') }}" class="btn btn-sm btn-primary mt-auto">Manage Questions</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card hover-card h-100 p-4">
+            <div class="stat-icon mb-3" style="background: rgba(100,116,139,0.12); color: var(--text-secondary);">
+                <i class="bi bi-journal-bookmark"></i>
+            </div>
+            <h6 class="fw-semibold mb-1">Notes &amp; Core CS Resources</h6>
+            <p class="text-secondary small mb-3">Add or remove study resources</p>
+            <a href="{{ url_for('resources.index') }}" class="btn btn-sm btn-primary mt-auto">Manage Resources</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card hover-card h-100 p-4">
+            <div class="stat-icon mb-3" style="background: rgba(220,38,38,0.12); color: var(--danger);">
+                <i class="bi bi-chat-square-quote"></i>
+            </div>
+            <h6 class="fw-semibold mb-1">Interview Questions</h6>
+            <p class="text-secondary small mb-3">Add or remove interview Q&amp;A</p>
+            <a href="{{ url_for('interview.index') }}" class="btn btn-sm btn-primary mt-auto">Manage Questions</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

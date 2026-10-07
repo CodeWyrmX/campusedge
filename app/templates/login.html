@@ -1,0 +1,69 @@
+{% extends "auth_base.html" %}
+{% block title %}Login - CampusEdge{% endblock %}
+{% block content %}
+<div class="auth-page">
+
+    <!-- Left: branding / visual panel (hidden on small screens) -->
+    <div class="auth-visual">
+        <div class="auth-visual-brand">Campus<span>Edge</span></div>
+
+        <div class="auth-visual-content">
+            <h2>Your complete placement<br>preparation companion.</h2>
+            <p>Track DSA progress, practice aptitude tests, prep for interviews, and stay on top of your academic resources — all in one place.</p>
+
+            <ul class="auth-feature-list">
+                <li><i class="bi bi-code-slash"></i> DSA topic-wise progress tracker</li>
+                <li><i class="bi bi-lightbulb"></i> Category &amp; difficulty based aptitude tests</li>
+                <li><i class="bi bi-chat-square-quote"></i> Technical &amp; HR interview question bank</li>
+                <li><i class="bi bi-journal-bookmark"></i> Branch and year specific study resources</li>
+            </ul>
+        </div>
+
+        <div class="auth-visual-footer">
+            Built for AKGEC students &middot; CampusEdge
+        </div>
+    </div>
+
+    <!-- Right: login form -->
+    <div class="auth-form-side">
+        <div class="auth-form-card">
+            <div class="brand-mobile">Campus<span>Edge</span></div>
+
+            <h1>Welcome back</h1>
+            <p class="auth-subtitle">Log in to continue your placement preparation.</p>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="auth-alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="auth-input-group">
+                    <label>Email Address</label>
+                    <div class="auth-input-wrap">
+                        <i class="bi bi-envelope"></i>
+                        <input type="email" name="email" placeholder="you@example.com" required>
+                    </div>
+                </div>
+
+                <div class="auth-input-group">
+                    <label>Password</label>
+                    <div class="auth-input-wrap">
+                        <i class="bi bi-lock"></i>
+                        <input type="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn">Log In</button>
+            </form>
+
+            <div class="auth-switch-link">
+                Don't have an account? <a href="{{ url_for('auth.register') }}">Create one</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

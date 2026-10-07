@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CampusEdge{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ========== SIDEBAR (hidden by default) ========== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand d-flex justify-content-between align-items-center">
+            <div>Campus<span>Edge</span></div>
+            <button class="btn btn-sm text-white" id="closeSidebar" style="font-size: 1.3rem;">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard.index') }}"
+                   class="nav-link {% if request.endpoint and request.endpoint.startswith('dashboard') %}active{% endif %}">
+                    <i class="bi bi-grid-1x2"></i> Dashboard
+                </a>
+                <a href="{{ url_for('resources.index') }}"
+                   class="nav-link {% if request.endpoint and request.endpoint.startswith('resources') %}active{% endif %}">
+                    <i class="bi bi-journal-bookmark"></i> Resources
+                </a>
+                <a href="{{ url_for('dsa.index') }}"
+                   class="nav-link {% if request.endpoint and request.endpoint.startswith('dsa') %}active{% endif %}">
+                    <i class="bi bi-code-slash"></i> DSA Tracker
+                </a>
+                <a href="{{ url_for('aptitude.index') }}"
+                   class="nav-link {% if request.endpoint and request.endpoint.startswith('aptitude') %}active{% endif %}">
+                    <i class="bi bi-lightbulb"></i> Aptitude
+                </a>
+                <a href="{{ url_for('interview.index') }}"
+                   class="nav-link {% if request.endpoint and request.endpoint.startswith('interview') %}active{% endif %}">
+                    <i class="bi bi-chat-square-quote"></i> Interview Prep
+                </a>
+                <a href="{{ url_for('planner.index') }}"
+                   class="nav-link {% if request.endpoint and request.endpoint.startswith('planner') %}active{% endif %}">
+                    <i class="bi bi-calendar-check"></i> Planner
+                </a>
+
+                {% if session.get('user_role') == 'admin' %}
+                <div class="mt-3 mb-2 px-3">
+                    <small class="text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.5px; color: #64748B;">Admin</small>
+                </div>
+                <a href="{{ url_for('admin.index') }}"
+                   class="nav-link {% if request.endpoint and request.endpoint.startswith('admin') %}active{% endif %}">
+                    <i class="bi bi-shield-lock"></i> Admin Panel
+                </a>
+                {% endif %}
+            {% endif %}
+        </nav>
+
+        <div class="sidebar-footer">
+            {% if session.get('user_id') %}
+                <button class="theme-toggle mb-3 w-100" id="themeToggle" title="Toggle theme">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
+
+                <a href="{{ url_for('profile.index') }}" class="text-decoration-none">
+                    <div class="d-flex align-items-center gap-2 px-2 mb-2">
+                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center"
+                             style="width:34px;height:34px;font-size:0.85rem; color: white;">
+                            {{ session.get('user_name', 'U')[0] | upper }}
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="text-white small fw-semibold text-truncate">{{ session.get('user_name') }}</div>
+                            <div style="font-size:0.75rem; color: #94A3B8;">{{ session.get('user_role', 'student') | title }}</div>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('profile.index') }}"
+                   class="nav-link {% if request.endpoint and request.endpoint.startswith('profile') %}active{% endif %}">
+                    <i class="bi bi-person-gear"></i> My Profile
+                </a>
+
+                <a href="{{ url_for('auth.logout') }}" class="nav-link">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="nav-link">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a href="{{ url_for('auth.register') }}" class="nav-link">
+                    <i class="bi bi-person-plus"></i> Register
+                </a>
+            {% endif %}
+        </div>
+    </aside>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <div class="main-content">
+        <!-- Top bar with menu button -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <button class="menu-btn" id="menuBtn" title="Open menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="page-title">
+                {% block page_header %}{% endblock %}
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Aptitude - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>Aptitude Practice</h1>
+    <p>Select a category to begin practicing.</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-end mb-4">
+    <a href="{{ url_for('aptitude.history') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-clock-history me-1"></i> View Past Attempts
+    </a>
+</div>
+
+<div class="row g-3">
+    {% for c in categories %}
+    <div class="col-md-4">
+        <a href="{{ url_for('aptitude.select_difficulty', category=c) }}" class="text-decoration-none">
+            <div class="card hover-card h-100">
+                <div class="card-body text-center py-5">
+                    <div class="stat-icon mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.5rem; background: rgba(37,99,235,0.12); color: var(--primary);">
+                        <i class="bi bi-lightbulb"></i>
+                    </div>
+                    <h5 class="fw-semibold mb-1">{{ c }}</h5>
+                    <p class="text-secondary small mb-0">Click to choose difficulty</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

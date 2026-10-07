@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>Your Learning Dashboard</h1>
+    <p>Track your preparation and stay consistent.</p>
+{% endblock %}
+
+{% block content %}
+
+<!-- Overall Progress -->
+{% set overall = 0 %}
+{% if total_topics > 0 or avg_percent %}
+    {% set dsa_part = (completed_topics / total_topics * 50) if total_topics > 0 else 0 %}
+    {% set apt_part = (avg_percent * 0.5) if avg_percent else 0 %}
+    {% set overall = (dsa_part + apt_part) | round | int %}
+{% endif %}
+
+<div class="card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0 fw-semibold">Overall Placement Preparation</h6>
+        <span class="fw-bold text-primary">{{ overall }}%</span>
+    </div>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar"
+             style="width: {{ overall }}%;"
+             aria-valuenow="{{ overall }}" aria-valuemin="0" aria-valuemax="100">
+        </div>
+    </div>
+    <small class="text-secondary mt-2 d-block">
+        Based on DSA completion (50%) + Aptitude average (50%)
+    </small>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <!-- DSA -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card h-100">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="stat-label">DSA Progress</div>
+                    <div class="stat-value">{{ completed_topics }} / {{ total_topics }}</div>
+                    <small class="text-secondary">{{ dsa_percent }}% completed</small>
+                </div>
+                <div class="stat-icon" style="background: rgba(37,99,235,0.12); color: var(--primary);">
+                    <i class="bi bi-code-slash"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aptitude -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card h-100">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="stat-label">Aptitude Score</div>
+                    <div class="stat-value">
+                        {% if avg_percent is not none %}{{ avg_percent }}%{% else %}—{% endif %}
+                    </div>
+                    <small class="text-secondary">
+                        {% if attempt_count > 0 %}{{ attempt_count }} test{{ 's' if attempt_count != 1 else '' }} taken{% else %}No attempts yet{% endif %}
+                    </small>
+                </div>
+                <div class="stat-icon" style="background: rgba(22,163,74,0.12); color: var(--success);">
+                    <i class="bi bi-lightbulb"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Tasks -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card h-100">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="stat-label">Pending Tasks</div>
+                    <div class="stat-value">{{ pending_count }}</div>
+                    <small class="text-secondary">{{ completed_task_count }} completed</small>
+                </div>
+                <div class="stat-icon" style="background: rgba(245,158,11,0.12); color: var(--warning);">
+                    <i class="bi bi-list-task"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest Attempt -->
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card h-100">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="stat-label">Latest Aptitude</div>
+                    <div class="stat-value">
+                        {% if latest_attempt %}
+                            {{ latest_attempt.score }}/{{ latest_attempt.total_questions }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </div>
+                    <small class="text-secondary">
+                        {% if latest_attempt %}
+                            {{ latest_attempt.taken_at.strftime('%d %b %Y') }}
+                        {% else %}
+                            No recent test
+                        {% endif %}
+                    </small>
+                </div>
+                <div class="stat-icon" style="background: rgba(99,102,241,0.12); color: #6366F1;">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Continue Learning + Planner Summary -->
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card p-4 h-100">
+            <h6 class="fw-semibold mb-3">Continue Learning</h6>
+
+            <div class="d-flex flex-column gap-3">
+                <a href="{{ url_for('dsa.index') }}" class="d-flex align-items-center gap-3 p-3 rounded-3"
+                   style="background: var(--bg); border: 1px solid var(--border);">
+                    <div class="stat-icon" style="background: rgba(37,99,235,0.12); color: var(--primary);">
+                        <i class="bi bi-code-slash"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold">DSA Tracker</div>
+                        <small class="text-secondary">{{ completed_topics }} of {{ total_topics }} topics done</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-secondary"></i>
+                </a>
+
+                <a href="{{ url_for('aptitude.index') }}" class="d-flex align-items-center gap-3 p-3 rounded-3"
+                   style="background: var(--bg); border: 1px solid var(--border);">
+                    <div class="stat-icon" style="background: rgba(22,163,74,0.12); color: var(--success);">
+                        <i class="bi bi-lightbulb"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold">Aptitude Practice</div>
+                        <small class="text-secondary">
+                            {% if avg_percent is not none %}Current average: {{ avg_percent }}%{% else %}Start your first test{% endif %}
+                        </small>
+                    </div>
+                    <i class="bi bi-chevron-right text-secondary"></i>
+                </a>
+
+                <a href="{{ url_for('interview.index') }}" class="d-flex align-items-center gap-3 p-3 rounded-3"
+                   style="background: var(--bg); border: 1px solid var(--border);">
+                    <div class="stat-icon" style="background: rgba(99,102,241,0.12); color: #6366F1;">
+                        <i class="bi bi-chat-square-quote"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold">Interview Prep</div>
+                        <small class="text-secondary">Practice common questions</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-secondary"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-semibold mb-0">Planner Summary</h6>
+                <a href="{{ url_for('planner.index') }}" class="small text-primary">Open Planner</a>
+            </div>
+
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: var(--bg);">
+                    <div class="stat-icon" style="background: rgba(245,158,11,0.12); color: var(--warning);">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <div>
+                        <div class="fw-semibold">{{ pending_count }} Pending</div>
+                        <small class="text-secondary">Tasks still to complete</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: var(--bg);">
+                    <div class="stat-icon" style="background: rgba(22,163,74,0.12); color: var(--success);">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <div>
+                        <div class="fw-semibold">{{ completed_task_count }} Completed</div>
+                        <small class="text-secondary">Great job keeping up!</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

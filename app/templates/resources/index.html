@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Resources - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>Resources</h1>
+    <p>Notes and core CS prep material curated for your branch &amp; year.</p>
+{% endblock %}
+
+{% block content %}
+
+<!-- Category tabs -->
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link {% if category == 'notes' %}active{% endif %}"
+           href="{{ url_for('resources.index', category='notes') }}">
+            <i class="bi bi-journal-text me-1"></i> Notes
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if category == 'core_cs' %}active{% endif %}"
+           href="{{ url_for('resources.index', category='core_cs') }}">
+            <i class="bi bi-cpu me-1"></i> Core CS Prep
+        </a>
+    </li>
+</ul>
+
+<!-- Admin: add new resource -->
+{% if is_admin %}
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ url_for('resources.bulk_add', category=category) }}" class="btn btn-success btn-sm">
+        <i class="bi bi-upload me-1"></i> Bulk Add
+    </a>
+</div>
+
+<div class="card p-4 mb-4">
+    <h6 class="fw-semibold mb-3">
+        <i class="bi bi-plus-circle me-1 text-primary"></i>
+        Add New Resource <span class="text-secondary fw-normal">({{ 'Notes' if category == 'notes' else 'Core CS Prep' }})</span>
+    </h6>
+    <form method="POST" action="{{ url_for('resources.add') }}" class="row g-2">
+        <input type="hidden" name="category" value="{{ category }}">
+        <div class="col-md-3">
+            <label class="form-label">Title</label>
+            <input type="text" name="title" class="form-control" placeholder="Title" required>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Subject</label>
+            <input type="text" name="subject" class="form-control" placeholder="e.g. DBMS">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Link / URL</label>
+            <input type="text" name="file_link" class="form-control" placeholder="Link to material">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Branch</label>
+            <select name="branch" class="form-select">
+                <option value="">Common (all)</option>
+                {% for b in branches %}
+                    <option value="{{ b }}">{{ b }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">Year</label>
+            <select name="year" class="form-select">
+                <option value="">Any</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <label class="form-label">Description</label>
+            <input type="text" name="description" class="form-control" placeholder="Optional description">
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-sm mt-2">
+                <i class="bi bi-plus-lg me-1"></i> Add Resource
+            </button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+<!-- Resource list -->
+{% if resources|length == 0 %}
+    <div class="card p-5 text-center">
+        <i class="bi bi-inbox fs-1 text-secondary mb-2"></i>
+        <p class="text-secondary mb-0">No resources available yet for your branch/year in this category.</p>
+    </div>
+{% else %}
+<div class="row g-3">
+    {% for r in resources %}
+    <div class="col-md-6">
+        <div class="card hover-card h-100 p-4">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h6 class="fw-semibold mb-0">{{ r.title }}</h6>
+                {% if r.subject %}<span class="badge bg-secondary">{{ r.subject }}</span>{% endif %}
+            </div>
+            <p class="text-secondary small mb-3">{{ r.description or "" }}</p>
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+                {% if r.file_link %}
+                    <a href="{{ r.file_link }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Open Resource
+                    </a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+
+                {% if is_admin %}
+                <form method="POST" action="{{ url_for('resources.delete', resource_id=r.id) }}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

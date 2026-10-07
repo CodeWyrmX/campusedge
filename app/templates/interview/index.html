@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Interview Prep - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>Interview Preparation</h1>
+    <p>Technical and HR questions to help you walk into interviews ready.</p>
+{% endblock %}
+
+{% block content %}
+
+<!-- Type tabs -->
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link {% if q_type == 'technical' %}active{% endif %}"
+           href="{{ url_for('interview.index', type='technical') }}">
+            <i class="bi bi-code-square me-1"></i> Technical
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if q_type == 'hr' %}active{% endif %}"
+           href="{{ url_for('interview.index', type='hr') }}">
+            <i class="bi bi-people me-1"></i> HR
+        </a>
+    </li>
+</ul>
+
+<!-- Admin: add new question -->
+{% if is_admin %}
+<div class="card p-4 mb-4">
+    <h6 class="fw-semibold mb-3">
+        <i class="bi bi-plus-circle me-1 text-primary"></i>
+        Add New {{ 'Technical' if q_type == 'technical' else 'HR' }} Question
+    </h6>
+    <form method="POST" action="{{ url_for('interview.add') }}">
+        <input type="hidden" name="type" value="{{ q_type }}">
+        <div class="mb-3">
+            <label class="form-label">Question</label>
+            <input type="text" name="question" class="form-control" placeholder="Question" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Model Answer</label>
+            <textarea name="model_answer" class="form-control" rows="2" placeholder="Model answer (optional)"></textarea>
+        </div>
+        <div class="mb-3" style="max-width: 280px;">
+            <label class="form-label">Branch</label>
+            <select name="branch" class="form-select">
+                <option value="">Common (all branches)</option>
+                {% for b in branches %}
+                    <option value="{{ b }}">{{ b }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i> Add Question
+        </button>
+    </form>
+</div>
+{% endif %}
+
+<!-- Questions accordion -->
+<div class="card p-4">
+    {% if questions|length == 0 %}
+        <div class="text-center py-4">
+            <i class="bi bi-chat-square-text fs-1 text-secondary mb-2"></i>
+            <p class="text-secondary mb-0">No questions available yet in this category.</p>
+        </div>
+    {% else %}
+    <div class="accordion" id="interviewAccordion">
+        {% for q in questions %}
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#q{{ q.id }}">
+                    {{ q.question }}
+                </button>
+            </h2>
+            <div id="q{{ q.id }}" class="accordion-collapse collapse" data-bs-parent="#interviewAccordion">
+                <div class="accordion-body">
+                    {% if q.model_answer %}
+                        <p class="mb-3">{{ q.model_answer }}</p>
+                    {% else %}
+                        <p class="text-secondary mb-3">No model answer provided yet.</p>
+                    {% endif %}
+
+                    {% if is_admin %}
+                    <form method="POST" action="{{ url_for('interview.delete', question_id=q.id) }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i> Delete</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

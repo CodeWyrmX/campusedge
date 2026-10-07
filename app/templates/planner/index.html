@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Planner - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>My Planner</h1>
+    <p>Keep track of personal tasks and deadlines.</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="card p-4 mb-4">
+    <h6 class="fw-semibold mb-3"><i class="bi bi-plus-circle me-1 text-primary"></i> Add New Task</h6>
+    <form method="POST" action="{{ url_for('planner.add') }}" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label">Title</label>
+            <input type="text" name="title" class="form-control" placeholder="Task title" required>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Description</label>
+            <input type="text" name="description" class="form-control" placeholder="Optional">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Due Date</label>
+            <input type="date" name="due_date" class="form-control">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Add Task</button>
+        </div>
+    </form>
+</div>
+
+<div class="row g-4">
+    <!-- Pending -->
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-semibold mb-0"><i class="bi bi-hourglass-split me-1" style="color: var(--warning);"></i> Pending</h6>
+                <span class="badge bg-warning text-dark">{{ pending_tasks|length }}</span>
+            </div>
+
+            {% if pending_tasks|length == 0 %}
+                <p class="text-secondary small mb-0">No pending tasks. You're all caught up!</p>
+            {% else %}
+                <div class="d-flex flex-column gap-2">
+                    {% for task in pending_tasks %}
+                    <div class="d-flex justify-content-between align-items-start p-3 rounded-3" style="background: var(--bg); border: 1px solid var(--border);">
+                        <div>
+                            <div class="fw-semibold">{{ task.title }}</div>
+                            {% if task.description %}<div class="text-secondary small">{{ task.description }}</div>{% endif %}
+                            {% if task.due_date %}
+                                <div class="text-secondary small mt-1">
+                                    <i class="bi bi-calendar3"></i> {{ task.due_date.strftime('%d %b %Y') }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-1">
+                            <form method="POST" action="{{ url_for('planner.complete', task_id=task.id) }}">
+                                <button type="submit" class="btn btn-sm btn-success" title="Mark done"><i class="bi bi-check-lg"></i></button>
+                            </form>
+                            <form method="POST" action="{{ url_for('planner.delete', task_id=task.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Completed -->
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-semibold mb-0"><i class="bi bi-check2-circle me-1" style="color: var(--success);"></i> Completed</h6>
+                <span class="badge bg-success">{{ completed_tasks|length }}</span>
+            </div>
+
+            {% if completed_tasks|length == 0 %}
+                <p class="text-secondary small mb-0">No completed tasks yet.</p>
+            {% else %}
+                <div class="d-flex flex-column gap-2">
+                    {% for task in completed_tasks %}
+                    <div class="d-flex justify-content-between align-items-start p-3 rounded-3" style="background: var(--bg); border: 1px solid var(--border);">
+                        <div>
+                            <div class="fw-semibold text-decoration-line-through text-secondary">{{ task.title }}</div>
+                            {% if task.description %}<div class="text-secondary small">{{ task.description }}</div>{% endif %}
+                        </div>
+                        <div class="d-flex gap-1">
+                            <form method="POST" action="{{ url_for('planner.complete', task_id=task.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary" title="Undo"><i class="bi bi-arrow-counterclockwise"></i></button>
+                            </form>
+                            <form method="POST" action="{{ url_for('planner.delete', task_id=task.id) }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

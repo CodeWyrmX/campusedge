@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Bulk Add Aptitude Questions - CampusEdge{% endblock %}
+
+{% block page_header %}
+    <h1>Bulk Add Questions</h1>
+    <p>Paste multiple questions at once</p>
+{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('admin.aptitude_questions') }}" class="btn btn-outline-secondary btn-sm">
+        ← Back to Questions
+    </a>
+</div>
+
+<div class="card p-4">
+    <h6 class="fw-semibold mb-3">Instructions</h6>
+    <p class="text-secondary small mb-3">
+        Use the format below. You can set Category, Difficulty and Test Number once, 
+        then list as many questions as you want.
+    </p>
+
+    <pre class="p-3 rounded-3 mb-4" style="background: var(--bg); font-size: 0.85rem; border: 1px solid var(--border);">Category: Quantitative Aptitude
+Difficulty: Easy
+Test Number: 1
+
+Question: What is 15% of 200?
+A. 20
+B. 30
+C. 25
+D. 35
+Correct: B
+
+Question: A number is increased by 20% and then decreased by 20%. The net change is?
+A. 4% increase
+B. 4% decrease
+C. No change
+D. 2% decrease
+Correct: B</pre>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Paste your questions here</label>
+            <textarea name="bulk_text" class="form-control" rows="18"
+                      placeholder="Paste questions in the format shown above..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Add All Questions
+        </button>
+    </form>
+</div>
+{% endblock %}
